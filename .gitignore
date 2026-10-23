@@ -1,0 +1,31 @@
+# Secrets — templates (.env.example) are committed, real files are not
+.env
+.env.*
+!.env.example
+.env
+.env.*
+!.env.example
+
+# Godot
+client/.godot/
+client/android/build/
+*.import.bak
+export_credentials.cfg
+
+# Builds and signing
+builds/
+keystore/
+*.keystore
+*.jks
+*.apk
+*.aab
+*.idsig
+
+# Node / server
+node_modules/
+coverage/
+
+# OS / editor
+Thumbs.db
+.DS_Store
+.vscode/settings.json
