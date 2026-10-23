@@ -1,13 +1,9 @@
 const { env } = require('./config/env');
 const { connectDB, disconnectDB } = require('./config/db');
 const { createApp } = require('./app');
-const { Player } = require('./models/Player');
-const { Score } = require('./models/Score');
 
 async function main() {
-  await connectDB();
-  // Make sure indexes exist (autoIndex is off in production), e.g. the unique playerId index.
-  await Promise.all([Player.syncIndexes(), Score.syncIndexes()]);
+  await connectDB(); // also creates missing indexes
   const server = createApp().listen(env.PORT, () => {
     console.log(`Robot Survival API listening on http://localhost:${env.PORT}/api/v1 (${env.NODE_ENV})`);
   });

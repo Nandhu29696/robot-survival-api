@@ -26,7 +26,8 @@ async function submitScore(req, res) {
     gameVersion: typeof gameVersion === 'string' ? gameVersion.slice(0, 20) : undefined,
     platform: typeof platform === 'string' ? platform.slice(0, 20) : undefined,
   });
-  return res.status(201).json({ accepted: true, bestScore: player.bestScore });
+  const rank = (await Player.countDocuments({ bestScore: { $gt: player.bestScore } })) + 1;
+  return res.status(201).json({ accepted: true, playerId: player.playerId, bestScore: player.bestScore, rank });
 }
 
 /** Monday 00:00 UTC of the current week. */

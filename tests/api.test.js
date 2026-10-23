@@ -63,6 +63,7 @@ test('valid score is accepted and bestScore never decreases', async () => {
   let r = await call('POST', '/scores', good, token);
   assert.equal(r.status, 201);
   assert.equal(r.body.bestScore, 400);
+  assert.equal(r.body.rank, 1, 'upload returns the global rank');
   r = await call('POST', '/scores', { ...good, score: 100, enemiesKilled: 5 }, token);
   assert.equal(r.status, 201);
   assert.equal(r.body.bestScore, 400);
@@ -113,6 +114,17 @@ test('weekly leaderboard ranks this week\'s best runs', async () => {
   assert.equal(lb.body.period, 'week');
   assert.deepEqual(lb.body.players.map((p) => p.bestScore), [900, 400]);
   assert.equal(lb.body.players[1].displayName, 'Robo_Hunter');
+});
+
+test('public web leaderboard page lists players and escapes names', async () => {
+  const res = await fetch(base.replace('/api/v1', '/'));
+  const html = await res.text();
+  assert.equal(res.status, 200);
+  assert.match(res.headers.get('content-type'), /text\/html/);
+  assert.ok(html.includes('Top_Gun') && html.includes('Robo_Hunter'));
+  assert.ok(!/<script/i.test(html), 'no scripts on the page');
+  const week = await (await fetch(base.replace('/api/v1', '/?period=week'))).text();
+  assert.ok(week.includes('This week'));
 });
 
 test('week starts on Monday 00:00 UTC', () => {
